@@ -1,0 +1,5 @@
+name: 数据库原理
+mode: exam
+exam_date: null       # 拿到考试日期后：lf pack db set exam_date 2027-01-10
+textbook: 王珊、萨师煊《数据库系统概论》第五版（假设，待确认）；实验用 MySQL
+scope: null

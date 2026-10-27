@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LearnForge</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:var(--color-background-primary,light-dark(#fff,#262624));--bg2:var(--color-background-secondary,light-dark(#f6f5f1,#1f1e1c));
+  --tx:var(--color-text-primary,light-dark(#1f1e1c,#f1efe8));--tx2:var(--color-text-secondary,light-dark(#6b6a65,#b4b2a9));--tx3:var(--color-text-tertiary,light-dark(#9a9893,#888780));
+  --bd:var(--color-border-primary,light-dark(rgba(0,0,0,.12),rgba(255,255,255,.14)));--bd2:var(--color-border-secondary,light-dark(rgba(0,0,0,.22),rgba(255,255,255,.26)));
+  --ok:var(--color-text-success,light-dark(#2f7a1f,#97c459));--okbg:var(--color-background-success,light-dark(#eaf3de,#27500a));
+  --bad:var(--color-text-danger,light-dark(#a32d2d,#f09595));--badbg:var(--color-background-danger,light-dark(#fcebeb,#501313));
+  --acc:var(--color-text-info,light-dark(#185fa5,#85b7eb));--accbg:var(--color-background-info,light-dark(#e6f1fb,#0c447c));
+  --warn:var(--color-text-warning,light-dark(#854f0b,#fac775));--warnbg:var(--color-background-warning,light-dark(#faeeda,#633806));
+  --r:var(--border-radius-md,8px);--font:var(--font-sans,-apple-system,"PingFang SC","Helvetica Neue",sans-serif);
+  --mono:var(--font-mono,ui-monospace,Menlo,monospace);
+}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.7 var(--font)}
+body.standalone{background:var(--bg2)}
+main{max-width:760px;margin:0 auto;padding:12px 16px 24px}
+body.standalone main{padding-top:24px}
+h1{font-size:19px;font-weight:600;margin:0}
+h2{font-size:16px;font-weight:600;margin:20px 0 8px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sub{font-size:13px;color:var(--tx2)}
+.card{background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.qh{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--tx2);margin-bottom:6px}
+.stem{margin:0 0 10px;white-space:pre-wrap}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+button{font:inherit;font-size:14px;color:var(--tx);background:transparent;border:1px solid var(--bd2);border-radius:var(--r);padding:6px 12px;cursor:pointer}
+button:hover{background:var(--bg2)}
+button.on{border-color:var(--acc);background:var(--accbg);color:var(--acc)}
+button.primary{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+button.link{border:none;padding:2px 4px;color:var(--tx2);font-size:13px;text-decoration:underline}
+button:disabled{opacity:.5;cursor:default}
+.opt{text-align:left}
+input,textarea{font:inherit;font-size:14px;color:var(--tx);background:var(--bg);border:1px solid var(--bd2);border-radius:var(--r);padding:6px 10px}
+textarea{width:100%;min-height:96px;resize:vertical}
+textarea.mono,input.mono{font-family:var(--mono);font-size:13px}
+label.k{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--tx2)}
+label.k input{width:120px}
+label.k input.wide{width:260px}
+.hint{font-size:13px;color:var(--tx2);margin:4px 0 0}
+.fb{border-top:1px solid var(--bd);margin-top:10px;padding-top:10px;font-size:14px}
+.tag{font-size:12px;border-radius:999px;padding:1px 10px;white-space:nowrap}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}
+.tag.pend{background:var(--warnbg);color:var(--warn)}.tag.acc{background:var(--accbg);color:var(--acc)}
+.err{font-size:13px;color:var(--bad)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:8px 0}
+.metric{background:var(--bg2);border-radius:var(--r);padding:10px 12px}
+.metric b{display:block;font-size:20px;font-weight:600}
+.metric span{font-size:12px;color:var(--tx2)}
+.concept{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);font-size:14px}
+.concept:last-child{border-bottom:none}
+.out{white-space:pre-wrap;background:var(--bg2);border-radius:var(--r);padding:10px 12px;font-size:14px;margin-top:8px}
+.st-unseen{color:var(--tx3)}.st-weak{color:var(--bad)}.st-shaky{color:var(--warn)}.st-ok{color:var(--acc)}.st-solid{color:var(--ok)}
+</style>
+</head>
+<body>
+<main id="app"><p class="sub">正在加载……</p></main>
+<script>
+const IN_HOST = window.parent !== window && !new URLSearchParams(location.search).has("standalone");
+if (!IN_HOST) document.body.classList.add("standalone");
+const $app = document.getElementById("app");
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = v => Array.isArray(v) ? v.map(fmt).join("，") : v && typeof v === "object" ? Object.entries(v).map(([k, x]) => `${k} = ${fmt(x)}`).join("；") : v === true ? "是" : v === false ? "否" : String(v);
+
+/* ---------------- 宿主桥：MCP Apps（postMessage JSON-RPC）或本地网页（HTTP） ---------------- */
+let rid = 0; const pending = {};
+function rpc(method, params) {
+  const id = ++rid;
+  window.parent.postMessage({jsonrpc: "2.0", id, method, params}, "*");
+  return new Promise((res, rej) => { pending[id] = {res, rej}; setTimeout(() => { if (pending[id]) { delete pending[id]; rej(new Error("宿主无响应")); } }, 60000); });
+}
+function notify(method, params) { window.parent.postMessage({jsonrpc: "2.0", method, params}, "*"); }
+window.addEventListener("message", e => {
+  const m = e.data;
+  if (!m || m.jsonrpc !== "2.0") return;
+  if (m.id != null && !m.method && pending[m.id]) {
+    const p = pending[m.id]; delete pending[m.id];
+    m.error ? p.rej(new Error(m.error.message || "出错")) : p.res(m.result);
+  } else if (m.method === "ui/notifications/tool-result") {
+    render(m.params?.structuredContent);
+  } else if (m.method === "ui/notifications/host-context-changed") {
+    applyContext(m.params);
+  } else if (m.method === "ui/resource-teardown" && m.id != null) {
+    window.parent.postMessage({jsonrpc: "2.0", id: m.id, result: {}}, "*");
+  } else if (m.method === "ping" && m.id != null) {
+    window.parent.postMessage({jsonrpc: "2.0", id: m.id, result: {}}, "*");
+  }
+});
+/* 宿主给的颜色是 light-dark(浅, 深)，取哪一边由 color-scheme 决定：宿主说了主题就跟宿主，没说就跟系统 */
+function applyContext(ctx) {
+  if (!ctx) return;
+  if (ctx.theme) { document.documentElement.dataset.theme = ctx.theme; document.documentElement.style.colorScheme = ctx.theme; }
+  const vars = ctx.styles?.variables || {};
+  for (const [k, v] of Object.entries(vars)) if (v) document.documentElement.style.setProperty(k, v);
+}
+async function callTool(name, args) {
+  if (IN_HOST) {
+    const r = await rpc("tools/call", {name, arguments: args || {}});
+    if (r?.isError) throw new Error((r.content || []).map(c => c.text).join(" ") || "工具出错");
+    return r.structuredContent;
+  }
+  const r = await fetch("/api/call", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({name, arguments: args || {}})});
+  const j = await r.json();
+  if (j.error) throw new Error(j.error);
+  return j.data;
+}
+/* 让 AI 接手（讲题、批改）：在聊天里就是发一条消息；在本地网页里走自带 API key 或复制提示词 */
+async function askAI(text, q, mode, holder) {
+  if (IN_HOST) {
+    try { await rpc("ui/message", {role: "user", content: [{type: "text", text}]}); holder.innerHTML = `<p class="sub">已发到聊天里，看下面的回复。</p>`; }
+    catch (e) { holder.innerHTML = `<p class="err">发送失败：${esc(e.message)}。可以直接在聊天里说：${esc(text)}</p>`; }
+    return;
+  }
+  holder.innerHTML = `<p class="sub">正在请 AI 讲解……</p>`;
+  const r = await fetch("/api/explain", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({q, mode, text})});
+  const j = await r.json();
+  if (j.text) { holder.innerHTML = `<div class="out">${esc(j.text)}</div>`; return; }
+  holder.innerHTML = `<p class="sub">${esc(j.note || "没有配置 API key。把下面的提示词复制到任意 AI 聊天里（DeepSeek、豆包、ChatGPT 都行）：")}</p><div class="out">${esc(j.prompt)}</div><div class="row"><button type="button">复制提示词</button></div>`;
+  holder.querySelector("button").onclick = async ev => { await navigator.clipboard.writeText(j.prompt); ev.target.textContent = "已复制"; };
+}
+
+/* ---------------- 视图 ---------------- */
+let state = {view: null, data: null, answers: {}, hints: {}, started: Date.now()};
+function render(data) {
+  if (!data) return;
+  state.data = data; state.view = data.view;
+  if (data.view === "quiz") return renderQuiz(data);
+  if (data.view === "result") return renderResult(data);
+  if (data.view === "dashboard") return renderDashboard(data);
+  $app.innerHTML = `<div class="out">${esc(JSON.stringify(data, null, 1))}</div>`;
+}
+
+const TYPE = {choice: "选择", judge: "判断", fill: "填空", calc: "计算", sql: "SQL", short: "简答", design: "设计", code: "代码"};
+const BOOL_KEYS = {safe: ["安全", "不安全"], granted: ["能", "不能"], serializable: ["是", "否"]};
+const WIDE_KEYS = ["sequence", "keys", "cover", "decomposition", "redo", "undo", "closure_B"];
+function inputFor(q) {
+  const id = q.id;
+  if (q.type === "choice") return `<div class="row">${Object.entries(q.options || {}).map(([k, v]) => `<button type="button" class="opt" data-q="${id}" data-v="${k}">${k}. ${esc(v)}</button>`).join("")}</div>`;
+  if (q.type === "judge") return `<div class="row">${["对", "错"].map(v => `<button type="button" class="opt" data-q="${id}" data-v="${v}">${v}</button>`).join("")}</div>`;
+  if (q.type === "fill") return `<div class="row">${Array.from({length: q.blanks || 1}, (_, i) => `<label class="k">第 ${i + 1} 空<input data-q="${id}" data-i="${i}"></label>`).join("")}</div>`;
+  if (q.type === "calc" && q.answer_keys) return `<div class="row">${q.answer_keys.map(k => BOOL_KEYS[k]
+      ? `<span class="k sub">${k}</span>${BOOL_KEYS[k].map((lab, j) => `<button type="button" class="opt" data-q="${id}" data-k="${k}" data-v="${j === 0}">${lab}</button>`).join("")}`
+      : `<label class="k">${k}<input data-q="${id}" data-k="${k}" class="${WIDE_KEYS.includes(k) ? "wide mono" : ""}"></label>`).join("")}</div>`;
+  if (q.type === "sql") return `<textarea class="mono" data-q="${id}" placeholder="SELECT ..."></textarea>`;
+  return `<textarea data-q="${id}" placeholder="写下你的答案"></textarea>`;
+}
+function renderQuiz(d) {
+  state.answers = {}; state.hints = {}; state.started = Date.now();
+  const qs = d.questions || [];
+  if (!qs.length) { $app.innerHTML = `<div class="card"><p>${esc("这一组没有还没做的题了。")}</p><div class="row"><button type="button" id="toDash">看复习面板</button></div></div>`; $app.querySelector("#toDash").onclick = () => go("lf_dashboard", {}); return; }
+  const total = qs.reduce((s, q) => s + (q.score || 0), 0);
+  $app.innerHTML = `<div class="bar"><div><h1>${esc(d.title)}</h1><span class="sub">${qs.length} 题 · ${total} 分 · 交卷后当场判分并记入账本</span></div></div>` +
+    qs.map((q, i) => `<div class="card" id="c-${q.id}"><div class="qh"><span>${i + 1}. ${TYPE[q.type] || esc(q.type)} · ${q.score} 分</span><span class="mark"></span></div>
+      <p class="stem">${esc(q.stem)}</p>${inputFor(q)}
+      <div class="row"><button type="button" class="link hintBtn" data-q="${q.id}" ${q.hint_levels ? "" : "disabled"}>提示${q.hint_levels ? "" : "（无）"}</button><button type="button" class="link skipBtn" data-q="${q.id}">不会，跳过</button></div>
+      <div class="hints"></div><div class="fbx"></div></div>`).join("") +
+    `<div class="row"><button type="button" class="primary" id="hand">交卷</button><span class="err" id="err"></span></div>`;
+  $app.querySelectorAll("button.opt").forEach(b => b.onclick = () => {
+    const q = b.dataset.q, k = b.dataset.k;
+    $app.querySelectorAll(`button.opt[data-q="${q}"]${k ? `[data-k="${k}"]` : ""}`).forEach(x => x.classList.remove("on"));
+    b.classList.add("on");
+    if (k) { state.answers[q] = state.answers[q] || {}; state.answers[q][k] = b.dataset.v === "true"; }
+    else state.answers[q] = b.dataset.v;
+    clearErr();
+  });
+  $app.querySelectorAll("input[data-q], textarea[data-q]").forEach(el => el.oninput = () => {
+    const q = el.dataset.q;
+    if (el.dataset.k) { state.answers[q] = state.answers[q] || {}; state.answers[q][el.dataset.k] = el.value.trim(); }
+    else if (el.dataset.i != null) { state.answers[q] = state.answers[q] || []; state.answers[q][+el.dataset.i] = el.value.trim(); }
+    else state.answers[q] = el.value;
+    clearErr();
+  });
+  $app.querySelectorAll(".skipBtn").forEach(b => b.onclick = () => { state.answers[b.dataset.q] = "__skip__"; b.textContent = "已标记为不会"; clearErr(); });
+  $app.querySelectorAll(".hintBtn").forEach(b => b.onclick = async () => {
+    const q = b.dataset.q, lvl = (state.hints[q] || 0) + 1;
+    try {
+      const r = await callTool("lf_hint", {q, level: lvl});
+      state.hints[q] = r.level;
+      b.closest(".card").querySelector(".hints").insertAdjacentHTML("beforeend", `<p class="hint">提示 ${r.level}/${r.of}：${esc(r.hint)}</p>`);
+      if (r.level >= r.of) { b.disabled = true; b.textContent = "提示已用完"; }
+    } catch (e) { showErr(e.message); }
+  });
+  $app.querySelector("#hand").onclick = submit;
+}
+function answered(q) {
+  const a = state.answers[q.id];
+  if (a === "__skip__") return true;
+  if (q.type === "fill") return Array.isArray(a) && a.filter(Boolean).length === (q.blanks || 1);
+  if (q.type === "calc" && q.answer_keys) return a && q.answer_keys.every(k => a[k] !== undefined && a[k] !== "");
+  return typeof a === "string" ? a.trim() !== "" : a != null;
+}
+function givenOf(q) {
+  const a = state.answers[q.id];
+  if (a === "__skip__") return "";
+  if (q.type === "fill") return a.join("|");
+  if (q.type === "calc" && q.answer_keys) { const o = {}; for (const k of q.answer_keys) { const v = a[k]; o[k] = typeof v === "string" && v !== "" && !isNaN(+v) ? +v : v; } return o; }
+  return a;
+}
+async function submit() {
+  const qs = state.data.questions;
+  const miss = qs.map((q, i) => answered(q) ? null : i + 1).filter(Boolean);
+  if (miss.length) return showErr(`第 ${miss.join("、")} 题还没答；不会的可以点“不会，跳过”`);
+  const sec = Math.round((Date.now() - state.started) / 1000);
+  const answers = qs.map(q => ({q: q.id, given: givenOf(q), hints: state.hints[q.id] || 0, seconds: Math.round(sec / qs.length)}));
+  const btn = $app.querySelector("#hand"); btn.disabled = true; btn.textContent = "判分中……";
+  try { renderResult(await callTool("lf_submit", {answers}), qs); }
+  catch (e) { btn.disabled = false; btn.textContent = "交卷"; showErr(e.message); }
+}
+function renderResult(d, qs) {
+  qs = qs || state.data?.questions || [];
+  const byId = Object.fromEntries(qs.map(q => [q.id, q]));
+  const causes = d.causes || {};
+  const nWrong = d.results.filter(r => r.status === "wrong").length;
+  const head = `<div class="bar"><div><h1>客观题 ${d.got} / ${d.total} 分</h1><span class="sub">已记入账本 · 答错 ${nWrong} 题${d.results.some(r => r.status === "pending") ? " · 主观题待批改" : ""}</span></div>
+    <div class="row"><button type="button" id="next">下一组</button><button type="button" id="dash">复习面板</button></div></div>`;
+  const cards = d.results.map((r, i) => {
+    const q = byId[r.q] || {stem: r.q};
+    const tag = {correct: `<span class="tag ok">正确</span>`, wrong: `<span class="tag bad">错误 · 得分 ${Math.round(r.score * r.score_max * 10) / 10}/${r.score_max}</span>`,
+                 pending: `<span class="tag pend">待批改</span>`, invalid: `<span class="tag pend">格式不对，未记录</span>`}[r.status];
+    const ans = r.answer !== undefined ? `<p><b>答案</b>：${esc(fmt(r.answer))}</p>` : r.reference ? `<p><b>参考答案</b>：</p><div class="out">${esc(r.reference)}</div>` : "";
+    const fb = r.feedback ? `<p class="sub">${esc(r.feedback)}</p>` : "";
+    const ex = r.explain ? `<p>${esc(r.explain)}</p>` : "";
+    const causeRow = r.status === "wrong" ? `<p class="sub" style="margin:8px 0 2px">这题错在哪？（选一个，记进错题本）</p><div class="row">${Object.entries(causes).map(([k, v]) => `<button type="button" class="cause" data-q="${r.q}" data-c="${k}">${esc(v)}</button>`).join("")}</div>` : "";
+    const ai = r.status === "wrong" ? `<button type="button" class="askBtn" data-q="${r.q}" data-m="explain">讲讲这题</button>` : r.status === "pending" ? `<button type="button" class="askBtn" data-q="${r.q}" data-m="grade">请 AI 批改</button>` : "";
+    return `<div class="card"><div class="qh"><span>${i + 1}. ${esc(r.q)}</span>${tag}</div><p class="stem">${esc(q.stem)}</p>
+      <div class="fb">${fb}${ans}${ex}${causeRow}<div class="row">${ai}</div><div class="aiOut"></div></div></div>`;
+  }).join("");
+  $app.innerHTML = head + cards;
+  $app.querySelectorAll("button.cause").forEach(b => b.onclick = async () => {
+    try {
+      await callTool("lf_tag_error", {q: b.dataset.q, cause: b.dataset.c, detail: ""});
+      b.parentElement.querySelectorAll("button.cause").forEach(x => { x.classList.remove("on"); x.disabled = true; });
+      b.classList.add("on");
+    } catch (e) { alert(e.message); }
+  });
+  $app.querySelectorAll(".askBtn").forEach(b => b.onclick = () => {
+    const r = d.results.find(x => x.q === b.dataset.q);
+    const mine = JSON.stringify((qs.find(q => q.id === r.q) && state.answers[r.q]) ?? "");
+    const text = b.dataset.m === "grade"
+      ? `请按评分要点批改 ${r.q}（先调用 lf_explain_context），我的答案：${mine}`
+      : `讲一下 ${r.q} 我错在哪（先调用 lf_explain_context），我的答案：${mine}`;
+    askAI(text, r.q, b.dataset.m, b.closest(".fb").querySelector(".aiOut"));
+  });
+  $app.querySelector("#next").onclick = () => go("lf_quiz", {pack: state.data?.pack || (qs[0]?.id || "os").split("-")[0]});
+  $app.querySelector("#dash").onclick = () => go("lf_dashboard", {});
+  state.data = {...d, view: "result", questions: qs, pack: state.data?.pack};
+}
+const KIND = {new: "新学", review: "复习", fix: "订正"};
+function renderDashboard(d) {
+  const t = d.today, S = d.status_names || {};
+  const exams = Object.entries(t.exams).map(([p, e]) => `<span class="tag ${e.days_left != null && e.days_left <= 14 ? "bad" : "acc"}">${p}：${e.days_left == null ? "未设考试日期" : `距考试 ${e.days_left} 天`}</span>`).join(" ");
+  const plan = t.plan.map((it, i) => `<div class="card"><div class="qh"><span>${i + 1}. ${KIND[it.kind] || it.kind} · 约 ${it.minutes} 分钟</span><span class="sub">${esc(it.concept)}</span></div>
+      <p style="margin:0 0 4px;font-weight:600">${esc(it.name)}</p>${it.reasons.map(r => `<p class="hint">· ${esc(r)}</p>`).join("")}
+      <div class="row">${it.questions.length ? `<button type="button" class="start" data-ids="${it.questions.join(",")}">练这几题</button>` : `<button type="button" class="learn" data-c="${esc(it.concept)}" data-n="${esc(it.name)}">先讲一下</button>`}</div><div class="aiOut"></div></div>`).join("");
+  const packs = Object.entries(d.stats).map(([p, s]) => {
+    const sc = s.status_count;
+    const chapters = Object.entries(s.chapters).map(([ch, cs]) => `<h2>${esc(ch)}</h2>${cs.map(c => `<div class="concept"><span>${esc(c.name)}</span><span class="st-${c.status}">${S[c.status] || c.status}${c.attempts ? ` · ${Math.round((c.acc || 0) * 100)}%` : ""}</span></div>`).join("")}`).join("");
+    const errs = Object.entries(s.error_causes).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${esc(d.cause_names[k] || k)} ${n}`).join(" · ");
+    return `<div class="card"><div class="qh"><span style="font-size:15px;color:var(--tx);font-weight:600">${p === "os" ? "操作系统" : p === "db" ? "数据库" : p}</span><span class="sub">预测分（粗估）${s.predicted_score}</span></div>
+      <div class="metrics">${["weak", "shaky", "ok", "solid", "unseen"].map(k => `<div class="metric"><b class="st-${k}">${sc[k] || 0}</b><span>${S[k]}</span></div>`).join("")}</div>
+      ${errs ? `<p class="sub">错因：${errs}</p>` : ""}
+      <div class="row"><button type="button" class="paper" data-p="${p}">做诊断卷</button></div>
+      <details><summary class="sub">各章掌握情况</summary>${chapters}</details></div>`;
+  }).join("");
+  $app.innerHTML = `<div class="bar"><div><h1>今天 ${t.minutes} 分钟</h1><span class="sub">按遗忘程度 × 考试权重 × 错因排序 · 不催，只在你打开时给</span></div><div>${exams}</div></div>
+    ${plan || `<div class="card"><p>还没有作答记录。先做一套诊断卷，系统才知道你哪里弱。</p></div>`}${packs}`;
+  $app.querySelectorAll(".start").forEach(b => b.onclick = () => go("lf_quiz", {ids: b.dataset.ids.split(",")}));
+  $app.querySelectorAll(".paper").forEach(b => b.onclick = () => go("lf_quiz", {pack: b.dataset.p, paper: "diag"}));
+  $app.querySelectorAll(".learn").forEach(b => b.onclick = () => askAI(`讲一下「${b.dataset.n}」（${b.dataset.c}），先问我已经知道什么`, null, "teach:" + b.dataset.c, b.closest(".card").querySelector(".aiOut")));
+}
+async function go(tool, args) {
+  try { const d = await callTool(tool, args); if (tool === "lf_quiz" && args.pack) d.pack = args.pack; render(d); window.scrollTo(0, 0); }
+  catch (e) { $app.insertAdjacentHTML("afterbegin", `<p class="err">${esc(e.message)}</p>`); }
+}
+function showErr(m) { const e = $app.querySelector("#err"); if (e) e.textContent = m; }
+function clearErr() { showErr(""); }
+
+/* ---------------- 启动 ---------------- */
+(async () => {
+  if (IN_HOST) {
+    try {
+      const r = await rpc("ui/initialize", {appCapabilities: {}, appInfo: {name: "learnforge", version: "0.2.0"}, protocolVersion: "2026-01-26"});
+      applyContext(r?.hostContext);
+      notify("ui/notifications/initialized", {});
+    } catch (e) { $app.innerHTML = `<p class="err">没能连上宿主：${esc(e.message)}</p>`; }
+    let last = 0;
+    new ResizeObserver(() => requestAnimationFrame(() => {
+      const h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+      if (h !== last) { last = h; notify("ui/notifications/size-changed", {width: Math.ceil(window.innerWidth), height: h}); }
+    })).observe(document.body);
+  } else {
+    const p = new URLSearchParams(location.search);
+    const view = p.get("view") || "dashboard";
+    const ids = p.get("ids");
+    go(view === "quiz" ? "lf_quiz" : "lf_dashboard", view === "quiz" ? (ids ? {ids: ids.split(",")} : {pack: p.get("pack") || "os", paper: p.get("paper") || "diag"}) : {});
+  }
+})();
+</script>
+</body>
+</html>

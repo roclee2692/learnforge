@@ -1,0 +1,8 @@
+#!/bin/sh
+# 本机版扩展：调用已安装的 lf 引擎（uv tool install 装在 ~/.local/bin/lf）
+LF="$HOME/.local/bin/lf"
+if [ ! -x "$LF" ]; then
+  echo "没有找到 $LF，请先安装 LearnForge 引擎" >&2
+  exit 1
+fi
+exec "$LF" mcp "$@"

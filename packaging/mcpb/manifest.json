@@ -1,0 +1,77 @@
+{
+  "manifest_version": "0.3",
+  "name": "learnforge",
+  "display_name": "LearnForge 学习引擎",
+  "version": "0.2.0",
+  "description": "出题、交卷判分、错题本、按遗忘程度安排复习；题卡直接显示在对话里。数据只存在本机。",
+  "author": {
+    "name": "Raelon"
+  },
+  "server": {
+    "type": "binary",
+    "entry_point": "server/learnforge-mcp",
+    "mcp_config": {
+      "command": "${__dirname}/server/learnforge-mcp",
+      "args": [],
+      "env": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "lf_quiz",
+      "description": "出一组题（默认是诊断卷里还没做的前 10 题），在界面里显示为可作答的题卡。答案不会下发，提交后由引擎判分。pack：os（操作系统）或 db（数据库）；paper：试卷名，默认 diag；concept：只出某个知识点前缀的题。"
+    },
+    {
+      "name": "lf_practice",
+      "description": "按今日复习建议挑一组题（未订正的错题优先），显示为题卡。"
+    },
+    {
+      "name": "lf_dashboard",
+      "description": "今日复习建议 + 各章掌握度 + 错因分布，显示为面板。用户问“今天学什么”“我准备得怎么样”时调用。不催促、不设提醒。"
+    },
+    {
+      "name": "lf_submit",
+      "description": "提交作答并判分、记账。answers：[{q: 题号, given: 作答, hints: 用了几级提示, seconds, confidence}]。计算题的 given 用对象，键名照题目的 answer_keys；多空填空用 | 分隔。主观题会返回 rubric 待你批改。"
+    },
+    {
+      "name": "lf_hint",
+      "description": "取某题的第 level 级提示（1~3）。三级提示用完才给答案。"
+    },
+    {
+      "name": "lf_tag_error",
+      "description": "给答错的题记错因。cause 只能是 concept / confusion / reading / calc / procedure / time / format；detail 写一句具体到步骤的话。"
+    },
+    {
+      "name": "lf_grade_subjective",
+      "description": "记录你按 rubric 批改主观题的结果。score 是 0~1 的得分率；没满分时给 cause 和 detail。"
+    },
+    {
+      "name": "lf_explain_context",
+      "description": "讲题前调用：返回题目、参考答案、解析、用户的作答和验算器的逐步过程。讲解以它为准，不要心算。"
+    },
+    {
+      "name": "lf_calc",
+      "description": "调用确定性验算器（页面置换、调度、银行家、磁盘、闭包、候选码、范式、分解、可串行化、日志恢复等），返回结果和逐步过程。name 例如 os.page_replace、db.keys。"
+    },
+    {
+      "name": "lf_add_question",
+      "description": "把一道新题入库（现场出题、从试卷照片切出来的真题）。真题入库前必须先让用户确认切分结果。计算题带 verify 字段会自动验算。"
+    },
+    {
+      "name": "lf_book_find",
+      "description": "在已导入的教材里按关键词检索，返回页码和片段。"
+    }
+  ],
+  "keywords": [
+    "learning",
+    "exam",
+    "quiz",
+    "spaced-repetition"
+  ],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": [
+      "darwin"
+    ]
+  }
+}

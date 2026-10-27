@@ -1,0 +1,36 @@
+# 考点权重（相对值，引擎会自动归一化）。
+# 现在是按国内 OS 期末常见分布估的：计算大题集中在调度、银行家、PV、页面置换、磁盘、混合索引。
+# 拿到往年真题后用 lf blueprint（第 1 阶段）重新统计并覆盖这里。
+source: estimate
+weights:
+  os.intro.features: 2
+  os.intro.kernel: 2
+  os.proc.state: 4
+  os.proc.thread: 3
+  os.sync.critical: 3
+  os.sync.semaphore: 5
+  os.sync.classic: 10
+  os.sync.monitor: 1
+  os.sched.levels: 2
+  os.sched.algos: 9
+  os.deadlock.conditions: 4
+  os.deadlock.banker: 9
+  os.deadlock.detect: 2
+  os.mem.contiguous: 3
+  os.mem.paging: 7
+  os.mem.multilevel: 3
+  os.mem.segment: 3
+  os.vm.demand: 2
+  os.vm.replace: 9
+  os.vm.thrash: 2
+  os.io.control: 3
+  os.io.buffer: 2
+  os.io.disk: 6
+  os.fs.dir: 2
+  os.fs.alloc: 5
+  os.fs.free: 3
+types:   # 估计的题型分值分布（满分 100）
+  choice: 20
+  fill: 10
+  short: 20
+  calc: 50

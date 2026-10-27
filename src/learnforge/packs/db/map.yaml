@@ -1,0 +1,55 @@
+# 能力地图：章节 → 知识点 → 前置依赖。章节按王珊《数据库系统概论》第五版。
+chapters:
+  - id: db.intro
+    name: 第1章 绪论
+    concepts:
+      - {id: db.intro.model, name: 数据模型三要素与概念/逻辑/物理模型}
+      - {id: db.intro.schema, name: 三级模式、两级映像与数据独立性}
+  - id: db.rel
+    name: 第2章 关系数据库
+    concepts:
+      - {id: db.rel.integrity, name: 关系、码与三类完整性约束, prereq: [db.intro.model]}
+      - {id: db.rel.algebra, name: 关系代数（选择、投影、连接、除）, prereq: [db.rel.integrity]}
+  - id: db.sql
+    name: 第3章 SQL
+    concepts:
+      - {id: db.sql.ddl, name: 建表与约束（DDL）, prereq: [db.rel.integrity]}
+      - {id: db.sql.single, name: 单表查询, prereq: [db.sql.ddl]}
+      - {id: db.sql.join, name: 连接查询（含自身连接、外连接）, prereq: [db.sql.single]}
+      - {id: db.sql.group, name: 聚集函数与 GROUP BY / HAVING, prereq: [db.sql.single]}
+      - {id: db.sql.nested, name: 嵌套查询（IN、比较、EXISTS）, prereq: [db.sql.join]}
+      - {id: db.sql.division, name: 全称量词查询（双重 NOT EXISTS）, prereq: [db.sql.nested, db.rel.algebra]}
+      - {id: db.sql.dml, name: 插入、修改、删除, prereq: [db.sql.single]}
+      - {id: db.sql.view, name: 视图, prereq: [db.sql.nested]}
+  - id: db.sec
+    name: 第4-5章 安全性与完整性
+    concepts:
+      - {id: db.sec.grant, name: GRANT / REVOKE 授权, prereq: [db.sql.ddl]}
+      - {id: db.sec.trigger, name: 完整性约束与触发器, prereq: [db.sql.ddl]}
+  - id: db.norm
+    name: 第6章 关系数据理论
+    concepts:
+      - {id: db.norm.fd, name: 函数依赖与属性集闭包, prereq: [db.rel.integrity]}
+      - {id: db.norm.keys, name: 求候选码, prereq: [db.norm.fd]}
+      - {id: db.norm.nf, name: 范式判断（1NF/2NF/3NF/BCNF）, prereq: [db.norm.keys]}
+      - {id: db.norm.cover, name: 最小依赖集, prereq: [db.norm.fd]}
+      - {id: db.norm.decomp, name: 模式分解（无损连接、保持依赖）, prereq: [db.norm.nf, db.norm.cover]}
+  - id: db.design
+    name: 第7章 数据库设计
+    concepts:
+      - {id: db.design.er, name: E-R 图与转换为关系模式, prereq: [db.rel.integrity]}
+  - id: db.opt
+    name: 第9章 查询优化
+    concepts:
+      - {id: db.opt.algebra, name: 代数优化与查询树, prereq: [db.rel.algebra]}
+  - id: db.txn
+    name: 第10章 数据库恢复技术
+    concepts:
+      - {id: db.txn.acid, name: 事务与 ACID}
+      - {id: db.txn.recovery, name: 日志、检查点与故障恢复, prereq: [db.txn.acid]}
+  - id: db.cc
+    name: 第11章 并发控制
+    concepts:
+      - {id: db.cc.anomaly, name: 三类数据不一致与封锁协议, prereq: [db.txn.acid]}
+      - {id: db.cc.serial, name: 可串行化与两段锁协议, prereq: [db.cc.anomaly]}
+      - {id: db.cc.deadlock, name: 活锁与死锁, prereq: [db.cc.anomaly]}

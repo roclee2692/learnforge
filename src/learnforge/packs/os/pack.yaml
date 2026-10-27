@@ -1,0 +1,5 @@
+name: 操作系统
+mode: exam            # exam：以盲测分为验收；growth：以项目和面试为验收
+exam_date: null       # 拿到考试日期后：lf pack os set exam_date 2027-01-10
+textbook: 汤小丹《计算机操作系统》第四版（假设，待确认；换教材后按目录改 map.yaml）
+scope: null           # 老师划的范围

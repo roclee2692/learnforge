@@ -1,0 +1,56 @@
+# 能力地图：章节 → 知识点 → 前置依赖
+# 章节顺序按汤小丹《计算机操作系统》第四版；学习顺序由 prereq 决定（死锁要先懂信号量）。拿到你的教材目录后（lf book toc os）再对齐。
+chapters:
+  - id: os.intro
+    name: 第1章 操作系统引论
+    concepts:
+      - {id: os.intro.features, name: OS 的特征与功能（并发、共享、虚拟、异步）}
+      - {id: os.intro.kernel, name: 用户态与内核态、中断与系统调用}
+  - id: os.proc
+    name: 第2章 进程的描述与控制
+    concepts:
+      - {id: os.proc.state, name: 进程概念、PCB 与状态转换}
+      - {id: os.proc.thread, name: 线程与多线程模型, prereq: [os.proc.state]}
+  - id: os.sched
+    name: 第3章 处理机调度
+    concepts:
+      - {id: os.sched.levels, name: 三级调度与调度性能指标, prereq: [os.proc.state]}
+      - {id: os.sched.algos, name: 调度算法计算（FCFS/SJF/HRRN/RR/优先级）, prereq: [os.sched.levels]}
+  - id: os.deadlock
+    name: 第3章 死锁
+    concepts:
+      - {id: os.deadlock.conditions, name: 死锁的必要条件与预防, prereq: [os.sync.semaphore]}
+      - {id: os.deadlock.banker, name: 银行家算法与安全性检查, prereq: [os.deadlock.conditions]}
+      - {id: os.deadlock.detect, name: 资源分配图、死锁检测与解除, prereq: [os.deadlock.conditions]}
+  - id: os.sync
+    name: 第4章 进程同步
+    concepts:
+      - {id: os.sync.critical, name: 临界区与互斥的实现, prereq: [os.proc.state]}
+      - {id: os.sync.semaphore, name: 信号量与 PV 操作, prereq: [os.sync.critical]}
+      - {id: os.sync.classic, name: 经典同步问题（生产者-消费者、读者-写者、哲学家）, prereq: [os.sync.semaphore]}
+      - {id: os.sync.monitor, name: 管程, prereq: [os.sync.semaphore]}
+  - id: os.mem
+    name: 第5章 存储器管理
+    concepts:
+      - {id: os.mem.contiguous, name: 连续分配与动态分区算法}
+      - {id: os.mem.paging, name: 分页地址变换与快表, prereq: [os.mem.contiguous]}
+      - {id: os.mem.multilevel, name: 多级页表与页表项计算, prereq: [os.mem.paging]}
+      - {id: os.mem.segment, name: 分段与段页式, prereq: [os.mem.paging]}
+  - id: os.vm
+    name: 第6章 虚拟存储器
+    concepts:
+      - {id: os.vm.demand, name: 请求分页与缺页中断, prereq: [os.mem.paging]}
+      - {id: os.vm.replace, name: 页面置换算法计算（FIFO/LRU/OPT/CLOCK）, prereq: [os.vm.demand]}
+      - {id: os.vm.thrash, name: 抖动与工作集, prereq: [os.vm.replace]}
+  - id: os.io
+    name: 第7章 输入输出系统
+    concepts:
+      - {id: os.io.control, name: I/O 控制方式（轮询、中断、DMA、通道）, prereq: [os.intro.kernel]}
+      - {id: os.io.buffer, name: 缓冲与 SPOOLing, prereq: [os.io.control]}
+      - {id: os.io.disk, name: 磁盘调度算法计算, prereq: [os.io.control]}
+  - id: os.fs
+    name: 第8-9章 文件管理与磁盘存储器管理
+    concepts:
+      - {id: os.fs.dir, name: 文件结构与目录（FCB、索引节点）}
+      - {id: os.fs.alloc, name: 外存分配与混合索引计算, prereq: [os.fs.dir]}
+      - {id: os.fs.free, name: 空闲空间管理（位示图、成组链接）, prereq: [os.fs.alloc]}

@@ -1,0 +1,37 @@
+# 考点权重（相对值，引擎自动归一化）。按国内数据库期末常见分布估计：
+# SQL 编写 + 关系代数 + 范式/分解是三块大题，事务并发和 E-R 设计次之。
+source: estimate
+weights:
+  db.intro.model: 2
+  db.intro.schema: 3
+  db.rel.integrity: 3
+  db.rel.algebra: 8
+  db.sql.ddl: 4
+  db.sql.single: 4
+  db.sql.join: 5
+  db.sql.group: 5
+  db.sql.nested: 6
+  db.sql.division: 4
+  db.sql.dml: 3
+  db.sql.view: 3
+  db.sec.grant: 3
+  db.sec.trigger: 2
+  db.norm.fd: 4
+  db.norm.keys: 5
+  db.norm.nf: 6
+  db.norm.cover: 4
+  db.norm.decomp: 5
+  db.design.er: 8
+  db.opt.algebra: 3
+  db.txn.acid: 2
+  db.txn.recovery: 3
+  db.cc.anomaly: 3
+  db.cc.serial: 3
+  db.cc.deadlock: 1
+types:
+  choice: 20
+  fill: 10
+  short: 15
+  sql: 25
+  calc: 15
+  design: 15
